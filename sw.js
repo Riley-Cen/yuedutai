@@ -1,6 +1,6 @@
 // 离线：界面文件先用缓存、后台更新；每期内容先走网络，断网时用缓存。
-const V = "ydt-v1";
-const SHELL = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest", "icons/icon-192.png"];
+const V = "ydt-v2";
+const SHELL = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest", "icons/icon-192.png", "icons/mark-64.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
