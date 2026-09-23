@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>阅读台</title>
 <meta name="description" content="每天 5 篇全球好文章的中文拆解，攒成写稿、做方案时搜得到、引得了的素材库。">
-<meta name="theme-color" content="#F4F6F3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111513" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="阅读台">
@@ -16,13 +16,26 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top"><a class="brand" href="#/">阅读台</a><span id="topMeta"></span></header>
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#/" aria-label="阅读台 首页">
+      <img src="icons/mark-64.png" alt="" width="28" height="28">
+      <span class="wm"><b>阅读台</b><small>DAILY READING DESK</small></span>
+    </a>
+    <nav class="nav" aria-label="主导航">
+      <a href="#/" data-tab="today">今日</a>
+      <a href="#/library" data-tab="library">素材库</a>
+      <a href="#/archive" data-tab="archive">往期</a>
+      <a href="#/me" data-tab="me">我的</a>
+    </nav>
+  </div>
+</header>
 <main id="view" tabindex="-1"><p class="state">正在打开…</p></main>
 <nav class="tabs" aria-label="主导航">
-  <a href="#/" data-tab="today"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13z"/></svg>今天</a>
-  <a href="#/library" data-tab="library"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>素材库</a>
-  <a href="#/archive" data-tab="archive"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v4H4zM5 9h14v11H5zM9 12h6"/></svg>往期</a>
-  <a href="#/me" data-tab="me"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>我的</a>
+  <a href="#/" data-tab="today">今日</a>
+  <a href="#/library" data-tab="library">素材库</a>
+  <a href="#/archive" data-tab="archive">往期</a>
+  <a href="#/me" data-tab="me">我的</a>
 </nav>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <script src="app.js"></script>
