@@ -1,0 +1,28 @@
+name: 推送新一期
+on:
+  push:
+    branches: [main]
+    paths: [editions/index.json]
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 发到微信（Server酱）
+        env:
+          SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+          SITE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        run: |
+          if [ -z "$SENDKEY" ]; then echo "未设置 SERVERCHAN_SENDKEY，跳过推送"; exit 0; fi
+          python3 - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          e = json.load(open("editions/index.json"))["editions"][0]
+          title = f"阅读台 第 {e['no']} 期：{e['count']} 篇拆解"
+          desp = "\n".join(f"- {t}" for t in e["titles"]) + f"\n\n[打开阅读台]({os.environ['SITE']})"
+          data = urllib.parse.urlencode({"title": title, "desp": desp}).encode()
+          r = urllib.request.urlopen(f"https://sctapi.ftqq.com/{os.environ['SENDKEY']}.send", data, timeout=20)
+          body = json.load(r)
+          print(body.get("code"), body.get("message"))
+          if body.get("code") != 0:
+              raise SystemExit("推送失败")
+          PY
