@@ -1,11 +1,11 @@
 # 阅读台
 
-每天 5 篇全球好文章的中文拆解，攒成写稿、做方案时搜得到、引得了的素材库。手机优先，可以加到主屏幕。
+每天 10 篇全球好文章的中文拆解，攒成写稿、做方案时搜得到、引得了的素材库。手机优先，可以加到主屏幕。
 
 ## 怎么运转
 
 1. **抓取**：`pipeline/fetch.py` 从 30 多个分析型信源抓取近两周的文章，生成候选池。
-2. **编辑**：Claude 按 `pipeline/EDITOR.md` 的标准选 5 篇、读全文、写拆解，存成 `editions/<日期>.json`。
+2. **编辑**：Claude 按 `pipeline/EDITOR.md` 的标准选 10 篇、读全文、写拆解，存成 `editions/<日期>.json`。
 3. **校验**：`pipeline/validate.py` 检查格式、查重，并重建 `editions/index.json`。
 4. **发布**：推送到 `main` 后，GitHub Pages 自动更新网站；`.github/workflows/notify.yml` 发一条微信推送（需要在仓库 Secrets 里设置 `SERVERCHAN_SENDKEY`，没设置就跳过）。
 
