@@ -36,7 +36,9 @@ const md = d => `${+d.slice(5, 7)}月${+d.slice(8, 10)}日`;
 const pad = n => String(n).padStart(2, "0");
 const tagName = t => TAGS[t]?.[0] ?? t;
 const mine = a => a.tags.filter(t => S.tags.includes(t));
-const readMin = a => Math.max(2, Math.round([a.why, ...Object.values(a.useful), ...a.points, ...a.takeaway, a.caveat].join("").length / 450));
+const readMin = a => Math.max(2, Math.round([a.why, ...(a.body || a.points), ...a.takeaway, a.caveat].join("").length / 450));
+// 深读正文：以 "## " 开头的是小标题，其余每条一段
+const bodyHTML = a => (a.body || []).map(p => p.startsWith("## ") ? `<h3>${esc(p.slice(3))}</h3>` : `<p>${esc(p)}</p>`).join("");
 const origLen = a => a.media === "podcast" ? `播客 ${a.minutes} 分钟` : `原文 ${a.minutes} 分钟`;
 const subsName = () => S.tags.length === ALL.length ? "全部 6 个方向" : S.tags.map(tagName).join("、");
 const dotSep = `<span class="dot" aria-hidden="true"></span>`;
@@ -188,7 +190,7 @@ async function renderEdition(date) {
     $("#feed").innerHTML = list.map(a => `
       <li class="card ${S.read[a.id] ? "is-read" : ""}">
         <a href="#/a/${a.id}">
-          <div class="meta"><span class="src">${esc(a.source)}</span>${dotSep}<span>拆解 ${readMin(a)} 分钟</span>${S.read[a.id] ? `${dotSep}<span class="done">已读</span>` : ""}</div>
+          <div class="meta"><span class="src">${esc(a.source)}</span>${dotSep}<span>${a.body ? "深读" : "拆解"} ${readMin(a)} 分钟</span>${S.read[a.id] ? `${dotSep}<span class="done">已读</span>` : ""}</div>
           <h2>${esc(a.title)}</h2>
           <p class="why">${esc(a.why)}</p>
         </a>
@@ -233,8 +235,11 @@ async function renderArticle(id) {
         ${rest.length ? `<details class="others"><summary>其他方向的读者怎么用</summary>${rest.map(t => `<p>${tagName(t)}：${esc(a.useful[t])}</p>`).join("")}</details>` : ""}
       </section>
 
-      <section class="block"><h2>核心拆解</h2>
-        <ul class="body points">${a.points.map(p => `<li>${lead(p)}</li>`).join("")}</ul></section>
+      ${a.body ? `<details class="block brief"><summary>先看要点 · 30 秒</summary>
+        <ul class="body points">${a.points.map(p => `<li>${lead(p)}</li>`).join("")}</ul></details>
+      <section class="block deep"><h2>深读</h2><div class="body prose">${bodyHTML(a)}</div></section>`
+      : `<section class="block"><h2>核心拆解</h2>
+        <ul class="body points">${a.points.map(p => `<li>${lead(p)}</li>`).join("")}</ul></section>`}
 
       <section class="block takeaways"><h2>可以直接拿走的</h2>
         <ul class="body checks">${a.takeaway.map(p => `<li>${esc(p)}</li>`).join("")}</ul></section>
@@ -273,7 +278,7 @@ async function renderArticle(id) {
 // ---------- 素材库：只在存过的文章里搜，结果带出处，可一键复制引用 ----------
 function fields(a) {
   return [["为什么值得看", a.why], ...Object.entries(a.useful).map(([t, v]) => [`对「${tagName(t)}」有用`, v]),
-    ...a.points.map(p => ["核心拆解", p]), ...a.takeaway.map(p => ["可以拿走", p]), ["局限", a.caveat]];
+    ...a.points.map(p => ["核心拆解", p]), ...(a.body || []).filter(p => !p.startsWith("## ")).map(p => ["深读", p]), ...a.takeaway.map(p => ["可以拿走", p]), ["局限", a.caveat]];
 }
 const cite = a => `（出自 ${a.author}《${a.orig}》，${a.source}，${a.date}，${a.url}）`;
 function hl(text, terms) {
