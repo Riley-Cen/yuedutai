@@ -21,8 +21,8 @@ def check(path, seen):
         if not isinstance(e.get(k), int):
             errs.append(f"{path.name}: {k} 应为整数")
     arts = e.get("articles") or []
-    if not 3 <= len(arts) <= 6:
-        errs.append(f"{path.name}: 应有 3–6 篇，现在 {len(arts)} 篇")
+    if not 3 <= len(arts) <= 12:
+        errs.append(f"{path.name}: 应有 3–12 篇，现在 {len(arts)} 篇")
     for n, a in enumerate(arts, 1):
         where = f"{path.name} 第 {n} 篇"
         for k, t in REQ.items():
