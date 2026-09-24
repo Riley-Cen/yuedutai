@@ -21,6 +21,8 @@ def check(path, seen):
         if not isinstance(e.get(k), int):
             errs.append(f"{path.name}: {k} 应为整数")
     arts = e.get("articles") or []
+    if sum("ai" in a.get("tags", []) for a in arts) > 3:
+        errs.append(f"{path.name}: 标了 ai 的最多 3 篇")
     if not 3 <= len(arts) <= 12:
         errs.append(f"{path.name}: 应有 3–12 篇，现在 {len(arts)} 篇")
     for n, a in enumerate(arts, 1):
@@ -39,6 +41,11 @@ def check(path, seen):
             errs.append(f"{where}: useful 的键必须和 tags 一致")
         if not 3 <= len(a["points"]) <= 5 or not 1 <= len(a["takeaway"]) <= 3:
             errs.append(f"{where}: points 3–5 条，takeaway 1–3 条")
+        body = a.get("body")
+        if not isinstance(body, list) or not all(isinstance(x, str) and x.strip() for x in body):
+            errs.append(f"{where}: 缺少 body（深读正文，字符串数组）")
+        elif not 1200 <= sum(len(x) for x in body) <= 9000:
+            errs.append(f"{where}: body 应为 1200–9000 字，现在 {sum(len(x) for x in body)} 字")
         if not re.match(r"https?://", a["url"]):
             errs.append(f"{where}: url 不对")
         if a["url"] in seen:
