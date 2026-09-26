@@ -1,25 +1,282 @@
-import React,{useState,useEffect,useRef} from 'react';import{createRoot}from'react-dom/client';import{ArrowLeft,ArrowRight,ArrowUpRight}from'lucide-react';import{Tabs,TabsList,TabsTrigger,TabsContent}from'./tabs';import{CourseList,CourseOverview,CourseReadPage}from'./course-pages';import{series}from'./curriculum';import ReadingTools,{useReadingPreferences}from'./reading-tools';import{areas,topics,courses,readings}from'./catalog';import'./style.css';
-function readRoute(){return location.hash.slice(1)||'/?area=capability&mode=course'}
-function saved(){try{const value=JSON.parse(localStorage.getItem('still-public-progress')||'[]');return Array.isArray(value)?value.filter((id):id is string=>typeof id==='string'):[]}catch{return []}}
-function homeLink(area='capability',mode='course',topic='gtm'){return `#/?area=${area}&mode=${mode}&topic=${topic}`}
-function App(){const[route,setRoute]=useState(readRoute),[done,setDone]=useState(saved),[saveError,setSaveError]=useState("");useEffect(()=>{const fn=()=>{setRoute(readRoute());scrollTo(0,0)};addEventListener('hashchange',fn);return()=>removeEventListener('hashchange',fn)},[]);const url=new URL(route,'https://local.test');const area=areas.some(x=>x.id===url.searchParams.get('area'))?url.searchParams.get('area')!:'capability';const mode=url.searchParams.get('mode')==='reading'?'reading':'course';const topic=topics.some(x=>x.id===url.searchParams.get('topic'))?url.searchParams.get('topic')!:'gtm';const course=series.find(s=>url.pathname===`/course/${s.id}`);const lesson=courses.find(x=>url.pathname===`/learn/${x.id}`);const reading=readings.find(x=>url.pathname===`/read/${x.id}`);function complete(id:string){const next=[...new Set([...done,id])];try{localStorage.setItem('still-public-progress',JSON.stringify(next));setDone(next);setSaveError("")}catch{setSaveError("浏览器未能保存阅读进度。当前内容仍可阅读，进度尚未记下。")}}return <div className="public-shell"><header className="public-header"><a href={homeLink()} className="brand"><span className="brand-symbol"/><span>余间<small>STILL</small></span></a><a className="header-home" href={homeLink()}>读一点</a></header><main className="public-main">{saveError&&<p role="alert" className="error">{saveError}</p>}{course?<CourseOverview course={course} done={done}/>:lesson?<CourseReadPage key={route} lesson={lesson} done={done} complete={complete}/>:reading?<ReadPage key={route} reading={reading}/>:<><div className="title-row"><div><h1>读一点，慢慢来。</h1><p className="subtitle">今天的好奇心，想走向哪里？</p></div></div><Tabs className="area-tabs" value={area} onValueChange={v=>location.hash=homeLink(v,mode).slice(1)}><TabsList variant="line" aria-label="学习板块">{areas.map(a=><TabsTrigger key={a.id} value={a.id}>{a.label}</TabsTrigger>)}</TabsList>{areas.map(a=><TabsContent value={a.id} key={a.id}><p className="area-summary">{a.description}</p><nav className="content-switch" aria-label="内容类型"><a href={homeLink(a.id,'course')} aria-current={mode==='course'?'page':undefined}>系统学习</a><a href={homeLink(a.id,'reading')} aria-current={mode==='reading'?'page':undefined}>资讯与阅读</a></nav>{mode==='course'?<CourseList area={area} done={done}/>:<>{area==='work'&&<Tabs className="work-topics" value={topic} onValueChange={v=>location.hash=homeLink(area,mode,v).slice(1)}><TabsList variant="line" aria-label="工作阅读主题">{topics.map(t=><TabsTrigger value={t.id} key={t.id}>{t.label}</TabsTrigger>)}</TabsList></Tabs>}{area==='work'&&<p className="work-topic-description">{topics.find(t=>t.id===topic)?.description}</p>}<ReadingList area={area} topic={topic}/></>}</TabsContent>)}</Tabs></>}</main></div>}
-function ReadingList({area,topic}:{area:string;topic:string}){
-  const list=readings.filter(x=>x.area===area&&(area!=='work'||x.topic===topic));
-  return <>{list.map((r,i)=><a className="news-row" href={`#/read/${r.id}`} key={r.id}>
-    <span className="news-index">{String(i+1).padStart(2,'0')}</span>
-    <div><span className="eyebrow">{r.kind==='analysis'?'余间 · 原创阅读':r.source}</span><h2>{r.title}</h2><p>{r.short}</p>
-      <div className="news-meta">{r.kind==='analysis'?'本站原创分析 · 发布 2026-09-26':<>站内导读 · 非原文全文<br/>原文发布 {r.date} · 收录 2026-09-26</>}</div>
-    </div><ArrowRight size={18}/>
-  </a>)}{!list.length&&<div className="empty-state"><h2>还没有收录文章</h2><p>这里会逐步加入经过筛选的文章。</p></div>}</>;
+import React, { useState, useEffect, useRef } from "react";
+import { createRoot } from "react-dom/client";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
+import { CourseList, CourseOverview, CourseReadPage } from "./course-pages";
+import { series } from "./curriculum";
+import ReadingTools, { useReadingPreferences } from "./reading-tools";
+import { areas, topics, courses, readings } from "./catalog";
+import "./style.css";
+function readRoute() {
+  return location.hash.slice(1) || "/?area=capability&mode=course";
 }
-function ReadingSources({reading}:{reading:typeof readings[number]}){
-  if(reading.kind!=='analysis')return <><p>本站原创导读，收录于 2026-09-26。原文由 {reading.source} 发布于 {reading.date}；这里未转载原文全文。</p><a href={reading.url} target="_blank" rel="noreferrer">阅读来源原文<ArrowUpRight size={14}/></a></>;
-  return <><h2>来源与延伸阅读</h2><p>余间原创分析，发布于 2026-09-26。下列材料于同日核实；文中的假设案例与练习由本站设计。</p>
-    {reading.references?.map(r=><div className="reading-reference" key={r.url}><span>{r.author}{r.date?` · 原文发布 ${r.date}`:''}</span><a href={r.url} target="_blank" rel="noreferrer">{r.title}<ArrowUpRight size={14}/></a></div>)}
-  </>;
+function saved() {
+  try {
+    const value = JSON.parse(
+      localStorage.getItem("still-public-progress") || "[]",
+    );
+    return Array.isArray(value)
+      ? value.filter((id): id is string => typeof id === "string")
+      : [];
+  } catch {
+    return [];
+  }
 }
-function ReadPage({reading}:{reading:typeof readings[number]}){
- const prefs=useReadingPreferences(),root=useRef<HTMLElement>(null);
- return <article ref={root} className={`reader reader-theme-${prefs.theme}`} style={prefs.style}><a className="back" href={homeLink(reading.area,'reading',reading.topic)}><ArrowLeft size={16}/>回到{areas.find(a=>a.id===reading.area)?.label}</a><div className="eyebrow">{reading.kind==='analysis'?'余间 · 原创阅读':'本站导读 · 非原文全文'}</div><h1>{reading.title}</h1><p className="dek">{reading.short}</p><ReadingTools preferences={prefs} root={root}/>{reading.sections.map(s=><section key={s.title}><h2>{s.title}</h2>{s.body.split('\n\n').map(p=><p key={p}>{p}</p>)}</section>)}<div className="sources"><ReadingSources reading={reading}/></div></article>;
+function homeLink(area = "capability", mode = "course", topic = "gtm") {
+  return `#/?area=${area}&mode=${mode}&topic=${topic}`;
 }
-createRoot(document.getElementById('root')!).render(<App/>);
+function App() {
+  const [route, setRoute] = useState(readRoute),
+    [done, setDone] = useState(saved),
+    [saveError, setSaveError] = useState("");
+  useEffect(() => {
+    const fn = () => {
+      setRoute(readRoute());
+      scrollTo(0, 0);
+    };
+    addEventListener("hashchange", fn);
+    return () => removeEventListener("hashchange", fn);
+  }, []);
+  const url = new URL(route, "https://local.test");
+  const area = areas.some((x) => x.id === url.searchParams.get("area"))
+    ? url.searchParams.get("area")!
+    : "capability";
+  const mode =
+    url.searchParams.get("mode") === "reading" ? "reading" : "course";
+  const topic = topics.some((x) => x.id === url.searchParams.get("topic"))
+    ? url.searchParams.get("topic")!
+    : "gtm";
+  const course = series.find((s) => url.pathname === `/course/${s.id}`);
+  const lesson = courses.find((x) => url.pathname === `/learn/${x.id}`);
+  const reading = readings.find((x) => url.pathname === `/read/${x.id}`);
+  function complete(id: string) {
+    const next = [...new Set([...done, id])];
+    try {
+      localStorage.setItem("still-public-progress", JSON.stringify(next));
+      setDone(next);
+      setSaveError("");
+    } catch {
+      setSaveError("浏览器未能保存阅读进度。当前内容仍可阅读，进度尚未记下。");
+    }
+  }
+  return (
+    <div className="public-shell">
+      <header className="public-header">
+        <a href={homeLink()} className="brand">
+          <span className="brand-symbol" />
+          <span>
+            余间<small>STILL</small>
+          </span>
+        </a>
+        <a className="header-home" href={homeLink()}>
+          读一点
+        </a>
+      </header>
+      <main className="public-main">
+        {saveError && (
+          <p role="alert" className="error">
+            {saveError}
+          </p>
+        )}
+        {course ? (
+          <CourseOverview course={course} done={done} />
+        ) : lesson ? (
+          <CourseReadPage
+            key={route}
+            lesson={lesson}
+            done={done}
+            complete={complete}
+          />
+        ) : reading ? (
+          <ReadPage key={route} reading={reading} />
+        ) : (
+          <>
+            <div className="title-row">
+              <div>
+                <h1>读一点，慢慢来。</h1>
+                <p className="subtitle">今天的好奇心，想走向哪里？</p>
+              </div>
+            </div>
+            <Tabs
+              className="area-tabs"
+              value={area}
+              onValueChange={(v) =>
+                (location.hash = homeLink(v, mode).slice(1))
+              }
+            >
+              <TabsList variant="line" aria-label="学习板块">
+                {areas.map((a) => (
+                  <TabsTrigger key={a.id} value={a.id}>
+                    {a.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {areas.map((a) => (
+                <TabsContent value={a.id} key={a.id}>
+                  <p className="area-summary">{a.description}</p>
+                  <nav className="content-switch" aria-label="内容类型">
+                    <a
+                      href={homeLink(a.id, "course")}
+                      aria-current={mode === "course" ? "page" : undefined}
+                    >
+                      系统学习
+                    </a>
+                    <a
+                      href={homeLink(a.id, "reading")}
+                      aria-current={mode === "reading" ? "page" : undefined}
+                    >
+                      资讯与阅读
+                    </a>
+                  </nav>
+                  {mode === "course" ? (
+                    <CourseList area={area} done={done} />
+                  ) : (
+                    <>
+                      {area === "work" && (
+                        <Tabs
+                          className="work-topics"
+                          value={topic}
+                          onValueChange={(v) =>
+                            (location.hash = homeLink(area, mode, v).slice(1))
+                          }
+                        >
+                          <TabsList variant="line" aria-label="工作阅读主题">
+                            {topics.map((t) => (
+                              <TabsTrigger value={t.id} key={t.id}>
+                                {t.label}
+                              </TabsTrigger>
+                            ))}
+                          </TabsList>
+                        </Tabs>
+                      )}
+                      {area === "work" && (
+                        <p className="work-topic-description">
+                          {topics.find((t) => t.id === topic)?.description}
+                        </p>
+                      )}
+                      <ReadingList area={area} topic={topic} />
+                    </>
+                  )}
+                </TabsContent>
+              ))}
+            </Tabs>
+          </>
+        )}
+      </main>
+    </div>
+  );
+}
+function ReadingList({ area, topic }: { area: string; topic: string }) {
+  const list = readings.filter(
+    (x) => x.area === area && (area !== "work" || x.topic === topic),
+  );
+  return (
+    <>
+      {list.map((r, i) => (
+        <a className="news-row" href={`#/read/${r.id}`} key={r.id}>
+          <span className="news-index">{String(i + 1).padStart(2, "0")}</span>
+          <div>
+            <span className="eyebrow">
+              {r.kind === "analysis" ? "余间 · 原创阅读" : r.source}
+            </span>
+            <h2>{r.title}</h2>
+            <p>{r.short}</p>
+            <div className="news-meta">
+              {r.kind === "analysis" ? (
+                "本站原创分析 · 发布 2026-09-26"
+              ) : (
+                <>
+                  站内导读 · 非原文全文
+                  <br />
+                  原文发布 {r.date} · 收录 2026-09-26
+                </>
+              )}
+            </div>
+          </div>
+          <ArrowRight size={18} />
+        </a>
+      ))}
+      {!list.length && (
+        <div className="empty-state">
+          <h2>还没有收录文章</h2>
+          <p>这里会逐步加入经过筛选的文章。</p>
+        </div>
+      )}
+    </>
+  );
+}
+function ReadingSources({ reading }: { reading: (typeof readings)[number] }) {
+  if (reading.kind !== "analysis")
+    return (
+      <>
+        <p>
+          本站原创导读，收录于 2026-09-26。原文由 {reading.source} 发布于{" "}
+          {reading.date}；这里未转载原文全文。
+        </p>
+        <a href={reading.url} target="_blank" rel="noreferrer">
+          阅读来源原文
+          <ArrowUpRight size={14} />
+        </a>
+      </>
+    );
+  return (
+    <>
+      <h2>来源与延伸阅读</h2>
+      <p>
+        余间原创分析，发布于
+        2026-09-26。下列材料于同日核实；文中的假设案例与练习由本站设计。
+      </p>
+      {reading.references?.map((r) => (
+        <div className="reading-reference" key={r.url}>
+          <span>
+            {r.author}
+            {r.date ? ` · 原文发布 ${r.date}` : ""}
+          </span>
+          <a href={r.url} target="_blank" rel="noreferrer">
+            {r.title}
+            <ArrowUpRight size={14} />
+          </a>
+        </div>
+      ))}
+    </>
+  );
+}
+function ReadPage({ reading }: { reading: (typeof readings)[number] }) {
+  const prefs = useReadingPreferences(),
+    root = useRef<HTMLElement>(null);
+  return (
+    <article
+      ref={root}
+      className={`reader reader-theme-${prefs.theme}`}
+      style={prefs.style}
+    >
+      <a
+        className="back"
+        href={homeLink(reading.area, "reading", reading.topic)}
+      >
+        <ArrowLeft size={16} />
+        回到{areas.find((a) => a.id === reading.area)?.label}
+      </a>
+      <div className="eyebrow">
+        {reading.kind === "analysis"
+          ? "余间 · 原创阅读"
+          : "本站导读 · 非原文全文"}
+      </div>
+      <h1>{reading.title}</h1>
+      <p className="dek">{reading.short}</p>
+      <ReadingTools preferences={prefs} root={root} />
+      {reading.sections.map((s) => (
+        <section key={s.title}>
+          <h2>{s.title}</h2>
+          {s.body.split("\n\n").map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </section>
+      ))}
+      <div className="sources">
+        <ReadingSources reading={reading} />
+      </div>
+    </article>
+  );
+}
+createRoot(document.getElementById("root")!).render(<App />);
