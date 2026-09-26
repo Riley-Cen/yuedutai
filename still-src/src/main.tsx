@@ -9,10 +9,7 @@ import { areas, topics, courses, readings } from "./catalog";
 import {
   Annotatable,
   AnnotationHint,
-  AnnotationList,
-  NotesPage,
   Paragraphs,
-  useAnnotations,
 } from "./annotations";
 import "./style.css";
 function readRoute() {
@@ -37,7 +34,6 @@ function App() {
   const [route, setRoute] = useState(readRoute),
     [done, setDone] = useState(saved),
     [saveError, setSaveError] = useState("");
-  const noteCount = useAnnotations().length;
   useEffect(() => {
     const fn = () => {
       setRoute(readRoute());
@@ -81,9 +77,6 @@ function App() {
           <a className="header-home" href={homeLink()}>
             读一点
           </a>
-          <a className="header-home" href="#/notes">
-            我的批注{noteCount ? ` ${noteCount}` : ""}
-          </a>
         </nav>
       </header>
       <main className="public-main">
@@ -92,9 +85,7 @@ function App() {
             {saveError}
           </p>
         )}
-        {url.pathname === "/notes" ? (
-          <NotesPage home={homeLink()} />
-        ) : course ? (
+        {course ? (
           <CourseOverview course={course} done={done} />
         ) : lesson ? (
           <CourseReadPage
@@ -289,7 +280,6 @@ function ReadPage({ reading }: { reading: (typeof readings)[number] }) {
           <Paragraphs id={`s${i}`} text={s.body} />
         </section>
       ))}
-      <AnnotationList />
       <div className="sources">
         <ReadingSources reading={reading} />
       </div>

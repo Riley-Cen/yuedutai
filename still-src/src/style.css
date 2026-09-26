@@ -1752,10 +1752,6 @@ html[data-reader-theme="night"] .brand small {
   border-radius: 2px;
   -webkit-tap-highlight-color: transparent;
 }
-.mark:focus-visible {
-  outline: 2px solid #6b5263;
-  outline-offset: 2px;
-}
 .mark-underline {
   text-decoration: underline 2px #d6532e;
   text-underline-offset: 5px;
@@ -1769,16 +1765,6 @@ html[data-reader-theme="night"] .brand small {
 .mark-note {
   text-decoration: underline dashed 1.5px #6b5263;
   text-underline-offset: 5px;
-}
-.mark-note-end::after {
-  content: "";
-  display: inline-block;
-  width: 0.42em;
-  height: 0.42em;
-  margin-left: 3px;
-  border-radius: 50%;
-  background: #6b5263;
-  vertical-align: 0.5em;
 }
 .annot-hint {
   font-size: 0.8rem;
@@ -1797,9 +1783,6 @@ html[data-reader-theme="night"] .brand small {
   background: #29232d;
   border-radius: 10px;
   box-shadow: 0 6px 24px rgba(41, 35, 45, 0.28);
-}
-.annot-bar.above {
-  transform: translate(-50%, -100%);
 }
 .annot-bar button {
   display: inline-flex;
@@ -1875,8 +1858,7 @@ html[data-reader-theme="night"] .brand small {
   font-size: 0.85rem;
   font-weight: 600;
 }
-.annot-sheet textarea,
-.annot-copy textarea {
+.annot-sheet textarea {
   width: 100%;
   min-height: 110px;
   box-sizing: border-box;
@@ -1890,28 +1872,6 @@ html[data-reader-theme="night"] .brand small {
   line-height: 1.7;
   resize: vertical;
 }
-.annot-kinds {
-  display: flex;
-  gap: 8px;
-}
-.annot-kinds button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  border: 1px solid #dedbd9;
-  border-radius: 999px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-.annot-kinds button[aria-pressed="true"] {
-  background: #29232d;
-  border-color: #29232d;
-  color: #fff;
-}
 .annot-actions {
   display: flex;
   align-items: center;
@@ -1923,74 +1883,6 @@ html[data-reader-theme="night"] .brand small {
 }
 .annot-actions .primary:disabled {
   opacity: 0.45;
-}
-.annot-list {
-  margin: 44px 0 10px;
-  padding-top: 26px;
-  border-top: 1px solid var(--border);
-}
-.annot-list h2 {
-  font-size: 1rem;
-}
-.annot-items {
-  list-style: none;
-  margin: 0 0 18px;
-  padding: 0;
-}
-.annot-items li {
-  border-bottom: 1px solid var(--border);
-}
-.annot-item {
-  display: block;
-  width: 100%;
-  padding: 16px 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-}
-button.annot-item {
-  cursor: pointer;
-}
-.annot-items blockquote {
-  margin: 0;
-  padding-left: 12px;
-  border-left: 3px solid #d6532e;
-  line-height: 1.8;
-  white-space: pre-wrap;
-}
-.annot-items blockquote.is-highlight {
-  border-left-color: #ec8e60;
-}
-.annot-note {
-  margin: 10px 0 0;
-  line-height: 1.8;
-  white-space: pre-wrap;
-}
-.annot-meta {
-  display: block;
-  margin-top: 8px;
-  font-size: 0.78rem;
-  color: #8a7f86;
-}
-.annot-copy {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 14px;
-  margin: 14px 0 6px;
-}
-.annot-copy textarea {
-  min-height: 180px;
-  font-size: 0.85rem;
-}
-.notes-page section {
-  margin-top: 34px;
-}
-.notes-page h2 a {
-  color: inherit;
-  text-decoration-color: #d6532e;
 }
 @media (min-width: 761px) {
   .annot-backdrop {
@@ -2009,11 +1901,7 @@ button.annot-item {
 .reader-theme-night .mark-note {
   text-decoration-color: #d9b8cf;
 }
-.reader-theme-night .mark-note-end::after {
-  background: #d9b8cf;
-}
-.reader-theme-night .annot-hint,
-.reader-theme-night .annot-meta {
+.reader-theme-night .annot-hint {
   color: #baaab7;
 }
 html[data-reader-theme="night"] .annot-sheet {
@@ -2030,13 +1918,6 @@ html[data-reader-theme="night"] .annot-sheet textarea {
   background: #241d25;
   border-color: #5a4c58;
   color: #f0e6ee;
-}
-html[data-reader-theme="night"] .annot-kinds button {
-  border-color: #5a4c58;
-}
-html[data-reader-theme="night"] .annot-kinds button[aria-pressed="true"] {
-  background: #e7d9d0;
-  color: #302731;
 }
 html[data-reader-theme="night"] .annot-sheet .primary {
   background: #e7d9d0;

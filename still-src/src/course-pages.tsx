@@ -13,7 +13,6 @@ import StorageDemo from "./storage-demo";
 import {
   Annotatable,
   AnnotationHint,
-  AnnotationList,
   Para,
   Paragraphs,
 } from "./annotations";
@@ -242,7 +241,6 @@ export function CourseReadPage({
           <Paragraphs id="tc" text={lesson.transfer.check} />
         </details>
       </section>
-      <AnnotationList />
       <div className="reader-footer">
         <button
           className="primary"
