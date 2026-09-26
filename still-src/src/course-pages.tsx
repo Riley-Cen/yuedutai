@@ -10,24 +10,19 @@ import {
 import ReadingTools, { useReadingPreferences } from "./reading-tools";
 import OpportunityLesson from "./opportunity-lesson";
 import StorageDemo from "./storage-demo";
+import {
+  Annotatable,
+  AnnotationHint,
+  AnnotationList,
+  Para,
+  Paragraphs,
+} from "./annotations";
 const areaName: Record<string, string> = {
   work: "工作",
   capability: "个人能力",
   growth: "心灵成长",
 };
 const courseHome = (area: string) => `#/?area=${area}&mode=course`;
-export function Paragraphs({ text }: { text: string }) {
-  return (
-    <>
-      {text
-        .split("\n\n")
-        .filter(Boolean)
-        .map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-    </>
-  );
-}
 export function CourseList({ area, done }: { area: string; done: string[] }) {
   const list = series.filter((s) => s.area === area);
   const current =
@@ -175,6 +170,7 @@ export function CourseReadPage({
       className={`reader course-reader reader-theme-${prefs.theme}`}
       style={prefs.style}
     >
+      <Annotatable page={`learn/${lesson.id}`} title={lesson.title} root={root}>
       <a className="back" href={`#/course/${course.id}`}>
         <ArrowLeft size={16} />
         回到课程路线
@@ -185,6 +181,7 @@ export function CourseReadPage({
       <h1>{lesson.title}</h1>
       <p className="dek">{lesson.short}</p>
       <ReadingTools preferences={prefs} root={root} />
+      <AnnotationHint />
       <details className="lesson-outline">
         <summary>本系列章节</summary>
         <ol>
@@ -207,20 +204,20 @@ export function CourseReadPage({
       )}
       <section className="lesson-summary">
         <h2>先看概念摘要</h2>
-        <p>{lesson.summary}</p>
+        <Para id="summary" text={lesson.summary} />
       </section>
       <section className="learning-objectives">
         <h2>这一课要学会</h2>
         <ul>
-          {lesson.objectives.map((o) => (
-            <li key={o}>{o}</li>
+          {lesson.objectives.map((o, i) => (
+            <Para as="li" key={o} id={`obj.${i}`} text={o} />
           ))}
         </ul>
       </section>
-      {lesson.sections.map((s) => (
+      {lesson.sections.map((s, i) => (
         <section key={s.title}>
           <h2>{s.title}</h2>
-          <Paragraphs text={s.body} />
+          <Paragraphs id={`s${i}`} text={s.body} />
         </section>
       ))}
       {lesson.id === "opportunity-cost" && <OpportunityLesson />}
@@ -228,23 +225,24 @@ export function CourseReadPage({
       {lesson.practice && (
         <section className="exercise">
           <h2>先自己推一遍</h2>
-          <Paragraphs text={lesson.practice.question} />
+          <Paragraphs id="pq" text={lesson.practice.question} />
           <details className="practice-answer">
             <summary>想好后，看参考推理</summary>
             <div className="answer">
-              <Paragraphs text={lesson.practice.answer} />
+              <Paragraphs id="pa" text={lesson.practice.answer} />
             </div>
           </details>
         </section>
       )}
       <section className="lesson-transfer">
         <h2>带到另一个情境</h2>
-        <Paragraphs text={lesson.transfer.task} />
+        <Paragraphs id="tt" text={lesson.transfer.task} />
         <details className="transfer-check">
           <summary>怎样检查自己的理解</summary>
-          <Paragraphs text={lesson.transfer.check} />
+          <Paragraphs id="tc" text={lesson.transfer.check} />
         </details>
       </section>
+      <AnnotationList />
       <div className="reader-footer">
         <button
           className="primary"
@@ -298,6 +296,7 @@ export function CourseReadPage({
           ))}
         </div>
       )}
+      </Annotatable>
     </article>
   );
 }

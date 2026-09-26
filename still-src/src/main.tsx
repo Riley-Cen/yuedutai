@@ -6,6 +6,14 @@ import { CourseList, CourseOverview, CourseReadPage } from "./course-pages";
 import { series } from "./curriculum";
 import ReadingTools, { useReadingPreferences } from "./reading-tools";
 import { areas, topics, courses, readings } from "./catalog";
+import {
+  Annotatable,
+  AnnotationHint,
+  AnnotationList,
+  NotesPage,
+  Paragraphs,
+  useAnnotations,
+} from "./annotations";
 import "./style.css";
 function readRoute() {
   return location.hash.slice(1) || "/?area=capability&mode=course";
@@ -29,6 +37,7 @@ function App() {
   const [route, setRoute] = useState(readRoute),
     [done, setDone] = useState(saved),
     [saveError, setSaveError] = useState("");
+  const noteCount = useAnnotations().length;
   useEffect(() => {
     const fn = () => {
       setRoute(readRoute());
@@ -68,9 +77,14 @@ function App() {
             余间<small>STILL</small>
           </span>
         </a>
-        <a className="header-home" href={homeLink()}>
-          读一点
-        </a>
+        <nav className="header-links" aria-label="站点">
+          <a className="header-home" href={homeLink()}>
+            读一点
+          </a>
+          <a className="header-home" href="#/notes">
+            我的批注{noteCount ? ` ${noteCount}` : ""}
+          </a>
+        </nav>
       </header>
       <main className="public-main">
         {saveError && (
@@ -78,7 +92,9 @@ function App() {
             {saveError}
           </p>
         )}
-        {course ? (
+        {url.pathname === "/notes" ? (
+          <NotesPage home={homeLink()} />
+        ) : course ? (
           <CourseOverview course={course} done={done} />
         ) : lesson ? (
           <CourseReadPage
@@ -250,6 +266,7 @@ function ReadPage({ reading }: { reading: (typeof readings)[number] }) {
       className={`reader reader-theme-${prefs.theme}`}
       style={prefs.style}
     >
+      <Annotatable page={`read/${reading.id}`} title={reading.title} root={root}>
       <a
         className="back"
         href={homeLink(reading.area, "reading", reading.topic)}
@@ -265,17 +282,18 @@ function ReadPage({ reading }: { reading: (typeof readings)[number] }) {
       <h1>{reading.title}</h1>
       <p className="dek">{reading.short}</p>
       <ReadingTools preferences={prefs} root={root} />
-      {reading.sections.map((s) => (
+      <AnnotationHint />
+      {reading.sections.map((s, i) => (
         <section key={s.title}>
           <h2>{s.title}</h2>
-          {s.body.split("\n\n").map((p) => (
-            <p key={p}>{p}</p>
-          ))}
+          <Paragraphs id={`s${i}`} text={s.body} />
         </section>
       ))}
+      <AnnotationList />
       <div className="sources">
         <ReadingSources reading={reading} />
       </div>
+      </Annotatable>
     </article>
   );
 }

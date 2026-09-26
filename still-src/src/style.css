@@ -1740,3 +1740,308 @@ html[data-reader-theme="night"] .public-header a {
 html[data-reader-theme="night"] .brand small {
   color: #a898a5;
 }
+
+/* 批注：划线、马克笔、写想法（只存在本设备） */
+.header-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.mark {
+  cursor: pointer;
+  border-radius: 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.mark:focus-visible {
+  outline: 2px solid #6b5263;
+  outline-offset: 2px;
+}
+.mark-underline {
+  text-decoration: underline 2px #d6532e;
+  text-underline-offset: 5px;
+  text-decoration-skip-ink: none;
+}
+.mark-highlight {
+  background: linear-gradient(transparent 45%, rgba(236, 142, 96, 0.38) 45%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.mark-note {
+  text-decoration: underline dashed 1.5px #6b5263;
+  text-underline-offset: 5px;
+}
+.mark-note-end::after {
+  content: "";
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  margin-left: 3px;
+  border-radius: 50%;
+  background: #6b5263;
+  vertical-align: 0.5em;
+}
+.annot-hint {
+  font-size: 0.8rem;
+  color: #8a7f86;
+  margin: 10px 0 20px;
+}
+.annot-bar {
+  position: fixed;
+  z-index: 60;
+  transform: translateX(-50%);
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  gap: 2px;
+  padding: 4px;
+  background: #29232d;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(41, 35, 45, 0.28);
+}
+.annot-bar.above {
+  transform: translate(-50%, -100%);
+}
+.annot-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #f4ece6;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.annot-bar button:hover,
+.annot-bar button:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+}
+.annot-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(41, 35, 45, 0.32);
+}
+.annot-sheet {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 18px 20px calc(20px + env(safe-area-inset-bottom));
+  background: #fffdf9;
+  color: #29232d;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -8px 32px rgba(41, 35, 45, 0.18);
+}
+.annot-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: #786771;
+}
+.annot-icon {
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.annot-sheet blockquote {
+  max-height: 30vh;
+  overflow: auto;
+  margin: 0 0 16px;
+  padding: 2px 0 2px 14px;
+  border-left: 3px solid #d6532e;
+  color: #4a4048;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.annot-sheet label {
+  display: block;
+  margin: 14px 0 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.annot-sheet textarea,
+.annot-copy textarea {
+  width: 100%;
+  min-height: 110px;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #dedbd9;
+  border-radius: 10px;
+  background: #fff;
+  color: #29232d;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.7;
+  resize: vertical;
+}
+.annot-kinds {
+  display: flex;
+  gap: 8px;
+}
+.annot-kinds button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid #dedbd9;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.annot-kinds button[aria-pressed="true"] {
+  background: #29232d;
+  border-color: #29232d;
+  color: #fff;
+}
+.annot-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.annot-actions .primary {
+  margin-left: auto;
+}
+.annot-actions .primary:disabled {
+  opacity: 0.45;
+}
+.annot-list {
+  margin: 44px 0 10px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border);
+}
+.annot-list h2 {
+  font-size: 1rem;
+}
+.annot-items {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+.annot-items li {
+  border-bottom: 1px solid var(--border);
+}
+.annot-item {
+  display: block;
+  width: 100%;
+  padding: 16px 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+button.annot-item {
+  cursor: pointer;
+}
+.annot-items blockquote {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 3px solid #d6532e;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.annot-items blockquote.is-highlight {
+  border-left-color: #ec8e60;
+}
+.annot-note {
+  margin: 10px 0 0;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.annot-meta {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: #8a7f86;
+}
+.annot-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: 14px 0 6px;
+}
+.annot-copy textarea {
+  min-height: 180px;
+  font-size: 0.85rem;
+}
+.notes-page section {
+  margin-top: 34px;
+}
+.notes-page h2 a {
+  color: inherit;
+  text-decoration-color: #d6532e;
+}
+@media (min-width: 761px) {
+  .annot-backdrop {
+    align-items: center;
+  }
+  .annot-sheet {
+    border-radius: 14px;
+  }
+}
+.reader-theme-night .mark-underline {
+  text-decoration-color: #f1ac91;
+}
+.reader-theme-night .mark-highlight {
+  background: linear-gradient(transparent 45%, rgba(241, 172, 145, 0.3) 45%);
+}
+.reader-theme-night .mark-note {
+  text-decoration-color: #d9b8cf;
+}
+.reader-theme-night .mark-note-end::after {
+  background: #d9b8cf;
+}
+.reader-theme-night .annot-hint,
+.reader-theme-night .annot-meta {
+  color: #baaab7;
+}
+html[data-reader-theme="night"] .annot-sheet {
+  background: #302731;
+  color: #f0e6ee;
+}
+html[data-reader-theme="night"] .annot-sheet-head {
+  color: #c8b8c5;
+}
+html[data-reader-theme="night"] .annot-sheet blockquote {
+  color: #e4d9e0;
+}
+html[data-reader-theme="night"] .annot-sheet textarea {
+  background: #241d25;
+  border-color: #5a4c58;
+  color: #f0e6ee;
+}
+html[data-reader-theme="night"] .annot-kinds button {
+  border-color: #5a4c58;
+}
+html[data-reader-theme="night"] .annot-kinds button[aria-pressed="true"] {
+  background: #e7d9d0;
+  color: #302731;
+}
+html[data-reader-theme="night"] .annot-sheet .primary {
+  background: #e7d9d0;
+  color: #302731;
+}
+html[data-reader-theme="night"] .annot-sheet .quiet-button {
+  color: #dfc9d6;
+}
