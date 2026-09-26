@@ -1,4 +1,4 @@
-import courses from './courses.json';
+import {courses,series} from './curriculum';
 import originalReadings from './readings.json';
 export type Reading={id:string;area:string;topic:string;title:string;short:string;source:string;date:string|null;url:string;kind?:'analysis';sections:{title:string;body:string}[];references?:{author:string;title:string;date:string|null;url:string}[]};
 export const areas=[{id:'work',label:'工作',description:'品牌、营销与市场，理解科技公司的增长。'},{id:'capability',label:'个人能力',description:'从 Vibe Coding 出发，也练习理解经济与商业。'},{id:'growth',label:'心灵成长',description:'心理学、自我理解，以及值得慢读的文学与社科。'}];
@@ -8,5 +8,5 @@ const guides:Reading[]=[
  {id:'self-compassion-difficulty',area:'growth',topic:'psychology',title:'为什么善待自己，有时很难？',source:'UC Berkeley · Greater Good',date:'2022-10-26',url:'https://greatergood.berkeley.edu/article/item/why_is_self_compassion_so_hard_for_some_people',short:'理解自我关怀的阻力，也看见人与人之间的差异。',sections:[{title:'先允许“这句话对我没用”',body:'对自己说一句温柔的话，并不保证立刻感觉好一些。Caroline Benner 在这篇文章中讨论了自我关怀可能遇到的阻力，并采访了相关研究者。它提供的一个有用视角是：一种练习没有帮助到你，不必立即解释成你做得不够好。'},{title:'关怀也可以是一个具体行动',body:'文章区分了在脑中安慰自己与通过行动照顾当下需要。阅读时可以留意：它不是要求每个人都采用同样的想象或语言练习，而是讨论人们在不同经历下可能有不同反应。'},{title:'读完后，留下一个观察',body:'回想一次有人安慰你、但你并没有更轻松的时刻。当时缺的是理解、陪伴，还是一件实际的帮助？这只是本站给出的阅读问题，不是心理评估。涉及个人经历时，不需要为了完成阅读而勉强解释自己。原文中的研究解释与练习条件值得结合上下文阅读。'}]},
 ];
 export const readings:Reading[]=[...originalReadings as Reading[],...guides];
-export const catalog=[...courses.map(lesson=>({id:lesson.id,area:'capability',type:'course' as const,lesson})),...readings.map(reading=>({id:reading.id,area:reading.area,type:'reading' as const,reading}))];
+export const catalog=[...courses.map(lesson=>({id:lesson.id,area:series.find(s=>s.id===lesson.seriesId)!.area,type:'course' as const,lesson})),...readings.map(reading=>({id:reading.id,area:reading.area,type:'reading' as const,reading}))];
 export {courses};
