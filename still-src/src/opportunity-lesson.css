@@ -1,0 +1,24 @@
+.opportunity-lesson .opportunity-equation{display:grid;gap:8px;margin:24px 0;padding:20px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.opportunity-equation span,.opportunity-control label,.opportunity-comparison span{font-size:.875rem;color:#776974}
+.opportunity-equation strong{font-size:clamp(1.05rem,3vw,1.4rem);font-variant-numeric:tabular-nums}
+.opportunity-control{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:24px 0 10px}
+.opportunity-control>div{display:flex;align-items:center;gap:9px;font-size:.875rem}
+.opportunity-control input{width:100px;padding:10px;border:1px solid #c8bdb5;background:#fff;border-radius:7px;color:var(--foreground)}
+.opportunity-lesson input:focus-visible{outline:3px solid var(--primary);outline-offset:4px}
+.opportunity-range{display:flex;width:100%;min-height:40px;accent-color:var(--primary);cursor:pointer}
+.opportunity-presets{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 24px}
+.opportunity-presets .secondary{font-size:.8rem;padding:8px 11px;border:1px solid #d8cdc4}
+.opportunity-presets button[aria-pressed=true]{background:#392a35;color:#fff;border-color:#392a35}
+.opportunity-comparison{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+.opportunity-comparison>div{display:grid;gap:9px}
+.opportunity-comparison strong{font-size:1.5rem;font-weight:550;font-variant-numeric:tabular-nums}
+.opportunity-result{display:grid;gap:8px;padding:18px 0;border-top:1px solid #d8cdc4;margin-bottom:8px;line-height:1.7}
+.opportunity-result strong{font-size:1.12rem;color:#933d25}
+.opportunity-result span{font-variant-numeric:tabular-nums;color:#66565f}
+.opportunity-questions{list-style:decimal;padding-left:1.5em;line-height:1.9;margin:18px 0 24px;color:#514650}
+.opportunity-questions li+li{margin-top:12px}
+.opportunity-lesson .answer p:last-child,.opportunity-lesson .example p:last-child{margin-bottom:0}
+.opportunity-sources ul{list-style:disc;padding-left:1.3em;line-height:1.85;font-size:.9rem;color:#776974}
+.opportunity-sources li{margin:12px 0}
+.opportunity-sources a{text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}
+@media(max-width:420px){.opportunity-comparison{gap:12px}.opportunity-comparison strong{font-size:1.25rem}.opportunity-comparison span{font-size:.8rem}}
