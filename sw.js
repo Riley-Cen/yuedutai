@@ -1,5 +1,5 @@
 // 离线：界面文件先用缓存、后台更新；每期内容先走网络，断网时用缓存。
-const V = "ydt-v4";
+const V = "ydt-v5";
 const SHELL = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest", "icons/icon-192.png", "icons/mark-64.png"];
 
 self.addEventListener("install", e => {
@@ -13,6 +13,8 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET" || url.origin !== location.origin) return;
+  // 余间（/still/）是独立站点，自己管理更新，不走阅读台的缓存
+  if (url.pathname.includes("/still/")) return;
   if (url.pathname.includes("/editions/")) {
     e.respondWith(fetch(e.request).then(r => {
       const copy = r.clone();

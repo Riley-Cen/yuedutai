@@ -1,17 +1,15 @@
-"use client";
-import {useEffect,useRef,useState,type CSSProperties,type RefObject} from "react";
+import {useEffect,useLayoutEffect,useRef,useState,type CSSProperties,type RefObject} from "react";
 
 type Theme="paper"|"warm"|"green"|"night";
 const themes:{id:Theme;label:string}[]=[{id:"paper",label:"纸白"},{id:"warm",label:"暖纸"},{id:"green",label:"豆绿"},{id:"night",label:"夜读"}];
 function today(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`}
 function readDay(){try{const d=JSON.parse(localStorage.getItem("still-reading-day")||"null");if(d?.day===today()&&Number.isFinite(d.seconds)&&d.seconds>=0)return d as {day:string;seconds:number}}catch{}return {day:today(),seconds:0}}
+function storedPreferences():{size:number;theme:Theme}{try{const p=JSON.parse(localStorage.getItem("still-reading-preferences")||"null");if(p&&[0.94,1,1.12].includes(p.size)&&themes.some(t=>t.id===p.theme))return p}catch{}return {size:1,theme:"paper"}}
 export function useReadingPreferences(){
-  const [size,setSize]=useState(1),[theme,setTheme]=useState<Theme>("paper"),[saveError,setSaveError]=useState("");
-  useEffect(()=>{try{const p=JSON.parse(localStorage.getItem("still-reading-preferences")||"null");if(p&&[0.94,1,1.12].includes(p.size)&&themes.some(t=>t.id===p.theme)){
-    // Restore browser-only display preferences after hydration.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSize(p.size);setTheme(p.theme);
-  }}catch{}},[]);
+  // Read saved preferences before the first render so switching pages never flashes the default theme.
+  const [size,setSize]=useState(()=>storedPreferences().size),[theme,setTheme]=useState<Theme>(()=>storedPreferences().theme),[saveError,setSaveError]=useState("");
+  // Let the page background follow the reading theme while an article is open.
+  useLayoutEffect(()=>{document.documentElement.dataset.readerTheme=theme;return()=>{delete document.documentElement.dataset.readerTheme}},[theme]);
   function update(nextSize:number,nextTheme:Theme){setSize(nextSize);setTheme(nextTheme);try{localStorage.setItem("still-reading-preferences",JSON.stringify({size:nextSize,theme:nextTheme}));setSaveError("")}catch{setSaveError("浏览器未能记住设置，当前选择仅本次有效。")}}
   return {size,theme,update,saveError,style:{"--reader-size":`${size}rem`} as CSSProperties};
 }
