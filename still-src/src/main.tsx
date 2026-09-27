@@ -11,6 +11,7 @@ import {
   AnnotationHint,
   Paragraphs,
 } from "./annotations";
+import { JournalPage, MoodPage } from "./mood";
 import "./style.css";
 function readRoute() {
   return location.hash.slice(1) || "/?area=capability&mode=course";
@@ -77,6 +78,12 @@ function App() {
           <a className="header-home" href={homeLink()}>
             读一点
           </a>
+          <a className="header-home" href="#/mood">
+            心情空间
+          </a>
+          <a className="header-home" href="#/journal">
+            我的回顾
+          </a>
         </nav>
       </header>
       <main className="public-main">
@@ -96,6 +103,10 @@ function App() {
           />
         ) : reading ? (
           <ReadPage key={route} reading={reading} />
+        ) : url.pathname === "/mood" ? (
+          <MoodPage />
+        ) : url.pathname === "/journal" ? (
+          <JournalPage />
         ) : (
           <>
             <div className="title-row">
